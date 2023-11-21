@@ -20,7 +20,8 @@ class AuthController extends Controller
                 'fio' => $request->input('fio'),
                 'email' => $request->input('email'),
                 'phone' => $request->input('phone'),
-                'password' => Hash::make($request->input('password'))
+                'password' => Hash::make($request->input('password')),
+                'role_id' => 2
             ]);
 
             $token = $user->createToken('user_token')->plainTextToken;
