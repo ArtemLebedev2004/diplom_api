@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,10 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('test', function () {
-    return response('This is working', 200);
-});
+Route::post('register', [AuthController::class, 'register']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', [AuthController::class, 'login']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('inside-mware', function () {
+        return response()->json('Success', 200);
+    });
+
 });
