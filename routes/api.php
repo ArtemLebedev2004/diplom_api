@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\BasketController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Middleware\AdminAuthMiddleware;
 use App\Models\Product;
@@ -25,6 +26,10 @@ Route::post('login', [AuthController::class, 'login']);
 Route::get('products', [ProductController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('cart', [BasketController::class, 'index']);
+
+    Route::post('cart/{product_id}', [BasketController::class, 'store']);
 
     Route::middleware([AdminAuthMiddleware::class])->group(function () {
 
