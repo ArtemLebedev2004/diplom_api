@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BasketController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Middleware\AdminAuthMiddleware;
+use App\Http\Middleware\ClientAuthMiddleware;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +28,15 @@ Route::get('products', [ProductController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('cart', [BasketController::class, 'index']);
+    Route::middleware([ClientAuthMiddleware::class])->group(function () {
 
-    Route::post('cart/{product_id}', [BasketController::class, 'store']);
+        Route::get('cart', [BasketController::class, 'index']);
+
+        Route::post('cart/{product_id}', [BasketController::class, 'store']);
+
+        Route::delete('cart/{product_id}', [BasketController::class, 'destroy']);
+
+    });
 
     Route::middleware([AdminAuthMiddleware::class])->group(function () {
 
