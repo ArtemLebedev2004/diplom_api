@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Middleware\AdminAuthMiddleware;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,9 +22,19 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::post('login', [AuthController::class, 'login']);
 
+Route::get('products', [ProductController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('add_product', [ProductController::class, 'store']);
+    Route::middleware([AdminAuthMiddleware::class])->group(function () {
+
+        Route::post('product', [ProductController::class, 'store']);
+
+        Route::patch('product/{id}', [ProductController::class, 'update']);
+
+        Route::delete('product/{id}', [ProductController::class, 'destroy']);
+
+    });
 
     Route::post('logout', [AuthController::class, 'logout']);
 

@@ -8,12 +8,13 @@ use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request) {
-        
+
         try {
 
             $user = User::create([
@@ -25,7 +26,7 @@ class AuthController extends Controller
             ]);
 
             $token = $user->createToken('user_token')->plainTextToken;
-            
+
             return response()->json([
                 'user' => $user,
                 'token' => $token
@@ -37,14 +38,14 @@ class AuthController extends Controller
                 'message' => 'Smth went wrong in AuthController.register'
             ]);
         }
-        
+
     }
 
 
     public function login(LoginRequest $request) {
 
         try {
-            
+
             $user = User::where('email', '=', $request->input('email'))->firstOrFail();
 
             if (!Hash::check($request->input('password'), $user->password)) {
@@ -74,15 +75,29 @@ class AuthController extends Controller
 
         try {
 
-            $user = User::findOrFail($request->input('user_id'));
+            if (Gate::allows('trueTokenLogout', $request->input('user_id'))) {
 
-            if (!count($user->tokens()->get())) {
-                return response()->json('NO', 200);
+                $user = User::findOrFail($request->input('user_id'));
+
+                if (!count($user->tokens()->get())) {
+                    return response()->json('NO', 200);
+                }
+
+                $user->tokens()->delete();
+
+                return response()->json('User logged out!', 200);
+
+            } else {
+
+                return response()->json([
+                    'warning' => [
+                        'code' => 403,
+                        'message' => 'Доступ для вашей группы запрещён'
+                    ]
+                ]);
+
             }
 
-            $user->tokens()->delete();
-
-            return response()->json('User logged out!', 200);
 
         } catch (\Exception $e) {
             return response()->json([

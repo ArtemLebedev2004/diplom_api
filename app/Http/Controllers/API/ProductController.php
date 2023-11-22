@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\AddProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -15,19 +18,19 @@ class ProductController extends Controller
     public function index()
     {
 
-        $products = Product::all();
+        $products = ProductResource::collection(Product::all());
 
-        return response()->json($products, 200);
+        return response()->json([
+            'products' => $products
+        ], 200);
 
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AddProductRequest $request)
     {
-
-        return response()->json(User::all('role_id')->first(), 200);        
 
         $product = Product::create([
             'title' => $request->input('title'),
@@ -36,9 +39,11 @@ class ProductController extends Controller
         ]);
 
         return response()->json([
-            'product' => $product,
-            'message' => 'Продукт добавлен'
-        ], 200);
+            'content' => [
+                'id' => $product->id,
+                'message' => 'Товар добавлен'
+            ]
+        ], 201);
 
     }
 
@@ -51,19 +56,26 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+
+
+        $product = Product::findOrFail($id);
+
+        $product->title = $request->input('title');
+        $product->description = $request->input('description');
+        $product->price = $request->input('price');
+
+        $product->save();
+
+        return response()->json([
+            'content' => [
+                'id' => $id,
+                'message' => 'Данные обновлены'
+            ]
+        ]);
     }
 
     /**
@@ -71,6 +83,12 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Product::findOrFail($id)->delete();
+
+        return response()->json([
+            'content' => [
+               'message' => 'Товар удалён'
+            ]
+        ]);
     }
 }
