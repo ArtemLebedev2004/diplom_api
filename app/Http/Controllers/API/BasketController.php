@@ -17,7 +17,7 @@ class BasketController extends Controller
      */
     public function index()
     {
-        $userProducts = Auth::user()->products;
+        $userProducts = DB::table('product_user')->where('user_id', '=', Auth::id())->join('products', 'product_user.product_id', '=', 'products.id')->select('product_user.id', 'products.id as product_id', 'products.price', 'products.title')->get();
 
         return response()->json([
            'content' => $userProducts
