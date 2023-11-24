@@ -21,7 +21,7 @@ class ProductController extends Controller
         $products = ProductResource::collection(Product::all());
 
         return response()->json([
-            'products' => $products
+            'content' => $products
         ], 200);
 
     }
@@ -60,7 +60,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
 
         $product = Product::findOrFail($id);
 

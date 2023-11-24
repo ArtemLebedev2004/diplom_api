@@ -7,7 +7,9 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,8 +30,9 @@ class AuthController extends Controller
             $token = $user->createToken('user_token')->plainTextToken;
 
             return response()->json([
-                'user' => $user,
-                'token' => $token
+                'content' => [
+                    'user_token' => $token
+                ]
             ], 200);
 
         } catch (\Exception $e) {
@@ -50,54 +53,58 @@ class AuthController extends Controller
 
             if (!Hash::check($request->input('password'), $user->password)) {
                 return response()->json([
-                    'message' => 'Wrong password'
-                ]);
+                    'warning' => [
+                        'code' => 401,
+                        'message' => 'Неудачный вход'
+                    ]
+                ], 401);
             }
 
             $token = $user->createToken('user_token')->plainTextToken;
 
             return response()->json([
-                'user' => $user,
-                'token' => $token
+                'content' => [
+                    'user_token' => $token
+                ]
             ], 200);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-                'message' => 'Smth went wrong in AuthController.login'
-            ]);
+            if ($e instanceof ModelNotFoundException) {
+
+                return response()->json([
+                    'warning' => [
+                        'code' => 401,
+                        'message' => 'Неудачный вход'
+                    ]
+                ], 401);
+
+            } else {
+
+                return response()->json([
+                    'error' => $e->getMessage(),
+                    'message' => 'Smth went wrong in AuthController.login'
+                ]);
+
+            }
+
         }
 
     }
 
 
-    public function logout(LogoutRequest $request) {
+    public function logout() {
 
         try {
 
-            if (Gate::allows('trueTokenLogout', $request->input('user_id'))) {
+            $user = User::findOrFail(Auth::id());
 
-                $user = User::findOrFail($request->input('user_id'));
+            $user->tokens()->delete();
 
-                if (!count($user->tokens()->get())) {
-                    return response()->json('NO', 200);
-                }
-
-                $user->tokens()->delete();
-
-                return response()->json('User logged out!', 200);
-
-            } else {
-
-                return response()->json([
-                    'warning' => [
-                        'code' => 403,
-                        'message' => 'Доступ для вашей группы запрещён'
-                    ]
-                ]);
-
-            }
-
+            return response()->json([
+                'content' => [
+                    'message' => 'Выход'
+                ]
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([

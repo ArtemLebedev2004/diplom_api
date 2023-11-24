@@ -65,5 +65,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'warning' => [
+                        'code' => 403,
+                        'message' => 'Гостевой доступ запрещён'
+                    ]
+                ], 403);
+            }
+        });
     }
 }

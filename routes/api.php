@@ -48,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('logout', [AuthController::class, 'logout']);
 
     Route::get('inside-mware', function () {
         return response()->json('Success', 200);

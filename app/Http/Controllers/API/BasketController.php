@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartItemResource;
 use App\Http\Resources\ProductResource;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,7 +20,15 @@ class BasketController extends Controller
      */
     public function index()
     {
-        $userProducts = DB::table('product_user')->where('user_id', '=', Auth::id())->join('products', 'product_user.product_id', '=', 'products.id')->select('product_user.id', 'products.id as product_id', 'products.price', 'products.title')->get();
+
+        // $userProducts = DB::table('product_user')->where('user_id', '=', Auth::id())
+        // ->join('products', 'product_user.product_id', '=', 'products.id')
+        // ->select('product_user.id', 'products.id as product_id', 'products.price', 'products.title')
+        // ->get();
+
+        // $userProducts = CartItem::with('product')->get();
+
+        $userProducts = CartItemResource::collection(CartItem::whereRelation('cart', 'user_id', Auth::id())->get());
 
         return response()->json([
            'content' => $userProducts
@@ -31,11 +42,20 @@ class BasketController extends Controller
     public function store(string $product_id)
     {
 
-        $user = User::findOrFail(Auth::id());
+        $cart = Cart::create([
+            'user_id' => Auth::id()
+        ]);
 
-        $product = Product::findOrFail($product_id);
+        $cartItem = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product_id
+        ]);
 
-        $user->products()->attach($product);
+        // $user = User::findOrFail(Auth::id());
+
+        // $product = Product::findOrFail($product_id);
+
+        // $user->products()->attach($product);
 
         return response()->json([
             'content' => [
@@ -75,11 +95,17 @@ class BasketController extends Controller
     public function destroy(string $product_id)
     {
 
-        $user = User::findOrFail(Auth::id());
+        $cartItem = CartItem::whereRelation('cart', 'user_id', Auth::id())->where('product_id', $product_id)->get()->first();
 
-        if (count($user->products->where('id', '=', $product_id))) {
+        if ($cartItem) {
 
-            $user->products()->detach($product_id);
+            CartItem::find($cartItem->id)->first()->delete();
+
+            $cart = Cart::has('cartItems')->get();
+
+            if (!count($cart)) {
+                Cart::where('user_id', Auth::id())->delete();
+            }
 
             return response()->json([
                 'content' => [

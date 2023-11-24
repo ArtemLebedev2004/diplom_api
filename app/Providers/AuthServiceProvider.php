@@ -34,9 +34,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('isClient', function (User $user) {
             return $user->role_id === 2;
         });
-
-        Gate::define('trueTokenLogout', function (User $user, $user_id) {
-            return $user->id == $user_id;
-        });
     }
 }
