@@ -32,7 +32,6 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
         $carts = Cart::where('user_id', Auth::id());
 
         if (count($carts->get())) {
@@ -45,7 +44,6 @@ class OrderController extends Controller
             // $countCartItems = count(Cart::has('cartItems')->where('user_id', Auth::id())->get());
 
             for ($index = 0; $index < count($productsId); $index++) {
-
                 $orderItem = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $productsId[$index]

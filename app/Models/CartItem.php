@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CartItem extends Model
 {
+
     use HasFactory;
 
     public function cart() {
@@ -21,4 +22,5 @@ class CartItem extends Model
         'cart_id',
         'product_id'
     ];
+
 }
