@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\AddProductRequest;
+use App\Http\Requests\Product\EditProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
@@ -35,7 +36,7 @@ class ProductController extends Controller
         $product = Product::create([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
-            'price' => $request->input('price')
+            'price' => $request->input('price'),
         ]);
 
         return response()->json([
@@ -58,14 +59,22 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EditProductRequest $request, string $id)
     {
 
         $product = Product::findOrFail($id);
 
-        $product->title = $request->input('title');
-        $product->description = $request->input('description');
-        $product->price = $request->input('price');
+        if ($request->input('title')) {
+            $product->title = $request->input('title');
+        }
+
+        if ($request->input('description')) {
+            $product->description = $request->input('description');
+        }
+
+        if ($request->input('price')) {
+            $product->price = $request->input('price');
+        }
 
         $product->save();
 

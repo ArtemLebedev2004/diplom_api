@@ -22,7 +22,6 @@ class AuthController extends Controller
             $user = User::create([
                 'fio' => $request->input('fio'),
                 'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
                 'password' => Hash::make($request->input('password')),
                 'role_id' => 2
             ]);
@@ -33,7 +32,7 @@ class AuthController extends Controller
                 'content' => [
                     'user_token' => $token
                 ]
-            ], 200);
+            ], 201);
 
         } catch (\Exception $e) {
             return response()->json([

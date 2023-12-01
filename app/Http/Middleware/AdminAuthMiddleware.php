@@ -21,7 +21,7 @@ class AdminAuthMiddleware
             return response()->json([
                 "warning" => [
                     "code" => 403,
-                    "message" => "Доступ для вашей группы зпрещён"
+                    "message" => "Доступ для вашей группы запрещён"
                 ]
             ], 403);
 

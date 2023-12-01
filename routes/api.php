@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BasketController;
+use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Middleware\ClientAuthMiddleware;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('register', [AuthController::class, 'register']);
+Route::post('signup', [AuthController::class, 'register']);
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -35,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('cart/{product_id}', [BasketController::class, 'store']);
 
         Route::delete('cart/{product_id}', [BasketController::class, 'destroy']);
+
+        Route::post('order', [OrderController::class, 'store']);
+
+        Route::get('order', [OrderController::class, 'index']);
 
     });
 

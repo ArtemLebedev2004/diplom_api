@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class EditProductRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,9 +14,9 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fio' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
+            'title' => 'required',
+            'description' => 'required',
+            'price' => 'required|numeric'
         ];
     }
 }

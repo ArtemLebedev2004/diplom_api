@@ -16,7 +16,7 @@ class AddProductRequest extends FormRequest
         return [
             'title' => 'required|unique:products',
             'description' => 'required',
-            'price' => 'required|decimal:2'
+            'price' => 'required|numeric'
         ];
     }
 }

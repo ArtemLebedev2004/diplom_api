@@ -41,13 +41,16 @@ class BasketController extends Controller
      */
     public function store(string $product_id)
     {
+        $cart = Cart::where('user_id', Auth::id())->get();
 
-        $cart = Cart::create([
-            'user_id' => Auth::id()
-        ]);
+        if (!count($cart)) {
+            $cart = Cart::create([
+                'user_id' => Auth::id()
+            ]);
+        }
 
         $cartItem = CartItem::create([
-            'cart_id' => $cart->id,
+            'cart_id' => $cart->first()->id,
             'product_id' => $product_id
         ]);
 
@@ -61,8 +64,7 @@ class BasketController extends Controller
             'content' => [
                 'message' => 'Товар в корзине'
             ]
-        ], 200);
-
+        ], 201);
     }
 
     /**
@@ -111,14 +113,14 @@ class BasketController extends Controller
                 'content' => [
                     'message' => 'Позиция удалена из корзины'
                 ]
-            ]);
+            ], 200);
 
         } else {
 
             return response()->json([
                 'warning' => [
-                    'code' => 404,
-                    'message' => 'Не найдено'
+                    'code' => 403,
+                    'message' => 'Запрещено'
                 ]
             ]);
 
