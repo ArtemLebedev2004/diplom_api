@@ -42,12 +42,20 @@ class BasketController extends Controller
     public function store(string $product_id)
     {
 
-        $cart = Cart::create([
-            'user_id' => Auth::id()
-        ]);
+        $carts = Cart::where('user_id', Auth::id())->get();
+
+        if (!count($carts)) {
+
+            $cart = Cart::create([
+                'user_id' => Auth::id()
+            ]);
+
+        }
+
+        $carts = Cart::where('user_id', Auth::id())->get();
 
         $cartItem = CartItem::create([
-            'cart_id' => $cart->id,
+            'cart_id' => $carts->first()->id,
             'product_id' => $product_id
         ]);
 
@@ -117,8 +125,8 @@ class BasketController extends Controller
 
             return response()->json([
                 'warning' => [
-                    'code' => 404,
-                    'message' => 'Не найдено'
+                    'code' => 403,
+                    'message' => 'Запрещено'
                 ]
             ]);
 
