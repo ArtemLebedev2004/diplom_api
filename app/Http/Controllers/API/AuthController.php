@@ -20,8 +20,9 @@ class AuthController extends Controller
         try {
 
             $user = User::create([
-                'fio' => $request->input('fio'),
+                'fullName' => $request->input('fullName'),
                 'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
                 'password' => Hash::make($request->input('password')),
                 'role_id' => 2
             ]);
@@ -29,9 +30,8 @@ class AuthController extends Controller
             $token = $user->createToken('user_token')->plainTextToken;
 
             return response()->json([
-                'content' => [
-                    'user_token' => $token
-                ]
+                'user' => $user,
+                'token' => $token
             ], 201);
 
         } catch (\Exception $e) {
