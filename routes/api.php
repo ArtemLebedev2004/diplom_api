@@ -27,6 +27,10 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::get('products', [ProductController::class, 'index']);
 
+Route::post('product', [ProductController::class, 'store']);
+
+Route::post('order/create', [OrderController::class, 'store']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware([ClientAuthMiddleware::class])->group(function () {
@@ -45,7 +49,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware([AdminAuthMiddleware::class])->group(function () {
 
-        Route::post('product', [ProductController::class, 'store']);
 
         Route::patch('product/{id}', [ProductController::class, 'update']);
 

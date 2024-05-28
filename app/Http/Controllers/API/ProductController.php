@@ -32,19 +32,30 @@ class ProductController extends Controller
      */
     public function store(AddProductRequest $request)
     {
+        $photo = $request->file('photo');
+        $photo = $photo->getClientOriginalName();
+        $request->file('photo')->move(public_path('images/attachments/'), $photo);
 
         $product = Product::create([
             'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'price' => $request->input('price'),
+            'amount' => $request->input('amount'),
+            'type' => $request->input('type'),
+            'date' => $request->input('date'),
+            'photo' => $photo
         ]);
 
-        return response()->json([
-            'content' => [
-                'id' => $product->id,
-                'message' => 'Товар добавлен'
-            ]
-        ], 201);
+
+        if ($product) {
+            return response()->json([
+                'content' => [
+                    'id' => $product->id,
+                    'message' => 'Товар добавлен'
+                ]
+            ], 201);
+        } else {
+            return response()->json('WROOOOONG!!!', 402);
+        }
+
 
     }
 

@@ -62,10 +62,9 @@ class AuthController extends Controller
             $token = $user->createToken('user_token')->plainTextToken;
 
             return response()->json([
-                'content' => [
-                    'user_token' => $token
-                ]
-            ], 200);
+                'user' => $user,
+                'token' => $token
+            ], 201);
 
         } catch (\Exception $e) {
             if ($e instanceof ModelNotFoundException) {

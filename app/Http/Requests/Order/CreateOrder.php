@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Product;
+namespace App\Http\Requests\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddProductRequest extends FormRequest
+class CreateOrder extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,11 +14,8 @@ class AddProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|unique:products',
-            'amount' => 'required|numeric',
-            'type' => 'required',
-            'date' => 'required',
-            'photo' => 'required'
+            'description' => 'required',
+            'email' => 'required|email|unique:orders'
         ];
     }
 }
