@@ -21,7 +21,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = OrderResource::collection(Order::where('user_id', Auth::id())->get());
+        $orders = OrderResource::collection(DB::table('orders')->latest()->get());
 
         return response()->json([
             'content' => $orders

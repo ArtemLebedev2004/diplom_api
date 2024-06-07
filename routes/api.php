@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BasketController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\typecontroller;
 use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Middleware\ClientAuthMiddleware;
 use App\Models\Product;
@@ -27,9 +28,25 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::get('products', [ProductController::class, 'index']);
 
+Route::get('products/{id}', [ProductController::class, 'show']);
+
+Route::put('product/{id}', [ProductController::class, 'update']);
+
+Route::delete('product/{id}', [ProductController::class, 'destroy']);
+
 Route::post('product', [ProductController::class, 'store']);
 
+Route::post('search', [ProductController::class, 'search']);
+
 Route::post('order/create', [OrderController::class, 'store']);
+
+Route::get('types', [typecontroller::class, 'index']);
+Route::get('type/{title}', [typecontroller::class, 'show']);
+Route::post('time_type/{title2}', [typecontroller::class, 't']);
+
+Route::get('orders', [OrderController::class, 'index']);
+
+
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -43,16 +60,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('order', [OrderController::class, 'store']);
 
-        Route::get('order', [OrderController::class, 'index']);
 
     });
 
     Route::middleware([AdminAuthMiddleware::class])->group(function () {
 
 
-        Route::patch('product/{id}', [ProductController::class, 'update']);
 
-        Route::delete('product/{id}', [ProductController::class, 'destroy']);
 
     });
 

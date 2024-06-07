@@ -19,14 +19,20 @@ class OrderResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $productsId = OrderItem::whereRelation('order', 'user_id', Auth::id())->whereRelation('order', 'id', $this->id)->pluck('product_id');
+        // $productsId = OrderItem::whereRelation('order', 'user_id', Auth::id())->whereRelation('order', 'id', $this->id)->pluck('product_id');
 
-        $productsPrices = Product::findOrFail($productsId)->pluck('price')->sum();
+        // $productsPrices = Product::findOrFail($productsId)->pluck('price')->sum();
+
+        // return [
+        //     'id' => $this->id,
+        //     'products' => $productsId,
+        //     'order_price' => $productsPrices
+        // ];
 
         return [
             'id' => $this->id,
-            'products' => $productsId,
-            'order_price' => $productsPrices
+            'description' => $this->description,
+            'email' => $this->email
         ];
 
     }

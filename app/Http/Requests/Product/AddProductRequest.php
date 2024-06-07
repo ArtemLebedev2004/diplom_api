@@ -15,10 +15,11 @@ class AddProductRequest extends FormRequest
     {
         return [
             'title' => 'required|unique:products',
+            'description' => 'required',
             'amount' => 'required|numeric',
             'type' => 'required',
-            'date' => 'required',
-            'photo' => 'required'
+            'date' => 'required|date_format:d/m/Y',
+            'photo' => 'required|mimes:png,jpg,jpeg'
         ];
     }
 }
