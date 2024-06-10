@@ -14,7 +14,7 @@ class AddProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|unique:products',
+            'title' => 'required',
             'description' => 'required',
             'amount' => 'required|numeric',
             'type' => 'required',

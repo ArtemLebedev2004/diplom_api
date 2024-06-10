@@ -28,7 +28,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::get('products', [ProductController::class, 'index']);
 
-Route::get('products/{id}', [ProductController::class, 'show']);
+Route::get('product/{id}', [ProductController::class, 'show']);
 
 Route::put('product/{id}', [ProductController::class, 'update']);
 
